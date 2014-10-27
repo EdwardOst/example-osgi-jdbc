@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
+           xmlns:camel="http://camel.apache.org/schema/blueprint"
+           xsi:schemaLocation="
+       http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+       http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint-2.12.0.xsd
+       http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.1.0.xsd">
+    
+    <reference id="myds" interface="javax.sql.DataSource" filter="(&amp;(dsname=myds_id)(osgi.jdbc.driver.class=com.mysql.jdbc.Driver)(osgi.jdbc.driver.name=mysql))" availability="optional"/>
+
+    <camelContext id="clientCamelContext" trace="false" xmlns="http://camel.apache.org/schema/blueprint">
+        <route id="dbtestRoute">
+            <from uri="timer:dbtest?repeatCount=1&amp;delay=3000"/>
+            <to uri="sql:select * from customers?dataSource=myds"/>
+            <to uri="log:sqlResult"/>
+        </route>
+
+    </camelContext>
+
+</blueprint>
